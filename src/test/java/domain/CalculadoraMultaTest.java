@@ -20,4 +20,16 @@ class CalculadoraMultaTest {
         // Assert
         assertEquals(0, multa);
     }
+
+    @Test
+    void devolucionUnDiaTarde_multaDosMil() {
+        // Arrange
+        LocalDate fechaDevolucion = LocalDate.of(2026, 11, 26);
+
+        // Act
+        int multa = calculadora.calcular(FECHA_LIMITE, fechaDevolucion, false);
+
+        // Assert
+        assertEquals(2000, multa);
+    }
 }
