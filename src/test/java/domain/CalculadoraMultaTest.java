@@ -56,4 +56,40 @@ class CalculadoraMultaTest {
         // Assert
         assertEquals(3000, multa);
     }
+
+    @Test
+    void devolucionEnElLimite_multaCero() {
+        // Arrange
+        LocalDate fechaDevolucion = LocalDate.of(2026, 11, 25);
+
+        // Act
+        int multa = calculadora.calcular(FECHA_LIMITE, fechaDevolucion, false);
+
+        // Assert
+        assertEquals(0, multa);
+    }
+
+    @Test
+    void devolucionVeinticincoDiasTarde_aplicaTopeCincuentaMil() {
+        // Arrange
+        LocalDate fechaDevolucion = LocalDate.of(2026, 12, 20);
+
+        // Act
+        int multa = calculadora.calcular(FECHA_LIMITE, fechaDevolucion, false);
+
+        // Assert
+        assertEquals(50000, multa);
+    }
+
+    @Test
+    void monitorCuarentaDiasTarde_mitadDelTope() {
+        // Arrange
+        LocalDate fechaDevolucion = LocalDate.of(2027, 1, 4);
+
+        // Act
+        int multa = calculadora.calcular(FECHA_LIMITE, fechaDevolucion, true);
+
+        // Assert
+        assertEquals(25000, multa);
+    }
 }
