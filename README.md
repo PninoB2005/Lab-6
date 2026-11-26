@@ -1,8 +1,12 @@
 # Miembros
 Integrante 1: Oscar Daniel Aguas Quiroz Documento: 1102577572
+
 Integrante 2: Juan Diego Mendoza Torres Documento: 1029720696
+
 Integrante 3: Documento: 
+
 Integrante 4: Documento: 
+
 Integrante 5: Grupo: 
 
 
