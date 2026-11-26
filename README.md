@@ -20,35 +20,35 @@ Proyecto Maven con Java 17 para el dominio de préstamo de equipos.
 |---|---|---|
 | Framework de pruebas | JUnit 5 (5.11.4) y Maven Surefire (3.5.2) | Ejecutar pruebas y reportar resultados. |
 | Dobles de prueba | Mockito (5.14.2) | Configurar mocks y verificar interacciones. |
-| Cliente HTTP y JSON | `java.net.http.HttpClient` (JDK 17) y Jackson Databind (2.18.2) | Realizar peticiones y convertir respuestas JSON. |
+| Cliente HTTP y JSON | \`java.net.http.HttpClient\` (JDK 17) y Jackson Databind (2.18.2) | Realizar peticiones y convertir respuestas JSON. |
 | Servidor HTTP de prueba | MockWebServer (4.12.0) | Responder peticiones HTTP reales en un servidor local de prueba. |
 | Cobertura | JaCoCo (0.8.12) | Medir ejecución de líneas y ramas y generar un informe HTML. |
 
 ## Requisitos y ejecución
 
-Instalar JDK 17 y Maven 3.9.x; comprobar `java -version` y `mvn -version`.
+Instalar JDK 17 y Maven 3.9.x; comprobar \`java -version\` y \`mvn -version\`.
 
 La primera ejecución requiere acceso a Maven Central para descargar dependencias.
 
 Ejecutar desde la raíz del proyecto:
 
-```sh
+\`\`\`sh
 mvn test
 mvn -Dtest=PrestamoTest test
 mvn clean verify
-```
+\`\`\`
 
-El segundo comando se utiliza una vez incorporadas las pruebas de `Prestamo`.
+El segundo comando se utiliza una vez incorporadas las pruebas de \`Prestamo\`.
 
-Surefire genera informes en `target/surefire-reports/`.
+Surefire genera informes en \`target/surefire-reports/\`.
 
-JaCoCo genera el informe HTML en `target/site/jacoco/index.html` durante `verify`.
+JaCoCo genera el informe HTML en \`target/site/jacoco/index.html\` durante \`verify\`.
 
 ## Organización
 
-- `src/main/java/domain`: reglas de negocio y contratos.
-- `src/main/java/data`: adaptadores de infraestructura.
-- `src/test/java`: pruebas automatizadas.
+- \`src/main/java/domain\`: reglas de negocio y contratos.
+- \`src/main/java/data\`: adaptadores de infraestructura.
+- \`src/test/java\`: pruebas automatizadas.
 
 El dominio no depende de bases de datos, red ni frameworks.
 
@@ -56,34 +56,34 @@ El dominio no depende de bases de datos, red ni frameworks.
 
 ## Parte 1 - Pruebas unitarias del dominio
 
-Esta parte se enfoca en verificar las reglas de negocio del agregado `Prestamo` mediante pruebas unitarias, sin depender de conexiones de red, bases de datos ni frameworks externos.
+Esta parte se enfoca en verificar las reglas de negocio del agregado \`Prestamo\` mediante pruebas unitarias, sin depender de conexiones de red, bases de datos ni frameworks externos.
 
 ### Entidad Prestamo
 
-Se implementó la entidad `Prestamo`, que representa una solicitud de préstamo de equipos y contiene los siguientes atributos:
+Se implementó la entidad \`Prestamo\`, que representa una solicitud de préstamo de equipos y contiene los siguientes atributos:
 
-- `id`: identificador del préstamo.
-- `estudianteId`: identificador del estudiante.
-- `equipoId`: identificador del equipo.
-- `estado`: estado actual del préstamo.
-- `fechaLimite`: fecha límite de devolución.
-- `renovaciones`: cantidad de renovaciones realizadas.
+- \`id\`: identificador del préstamo.
+- \`estudianteId\`: identificador del estudiante.
+- \`equipoId\`: identificador del equipo.
+- \`estado\`: estado actual del préstamo.
+- \`fechaLimite\`: fecha límite de devolución.
+- \`renovaciones\`: cantidad de renovaciones realizadas.
 
 ### Estados del préstamo
 
-Se implementó el enumerado `EstadoPrestamo` con los siguientes estados:
+Se implementó el enumerado \`EstadoPrestamo\` con los siguientes estados:
 
-- `PENDIENTE`
-- `APROBADO`
-- `DEVUELTO`
+- \`PENDIENTE\`
+- \`APROBADO\`
+- \`DEVUELTO\`
 
 ### Reglas de negocio
 
 | Operación | Condición | Comportamiento |
 |---|---|---|
-| `aprobar(hoy)` | El préstamo está pendiente. | Cambia el estado a aprobado y establece una fecha límite de siete días. |
-| `renovar()` | El préstamo está aprobado y no ha sido renovado. | Extiende la fecha límite siete días e incrementa el contador de renovaciones. |
-| `devolver()` | El préstamo está aprobado. | Cambia el estado a devuelto. |
+| \`aprobar(hoy)\` | El préstamo está pendiente. | Cambia el estado a aprobado y establece una fecha límite de siete días. |
+| \`renovar()\` | El préstamo está aprobado y no ha sido renovado. | Extiende la fecha límite siete días e incrementa el contador de renovaciones. |
+| \`devolver()\` | El préstamo está aprobado. | Cambia el estado a devuelto. |
 
 Se implementaron siete escenarios de prueba para verificar los comportamientos correctos y los errores correspondientes a cada operación.
 
@@ -97,7 +97,7 @@ También se realizó una modificación intencional de una regla de negocio para 
 
 ## Parte 2 - Desarrollo guiado por pruebas (TDD)
 
-Esta parte consiste en implementar la clase `CalculadoraMulta` utilizando la metodología Test-Driven Development (TDD).
+Esta parte consiste en implementar la clase \`CalculadoraMulta\` utilizando la metodología Test-Driven Development (TDD).
 
 Se trabaja mediante tres etapas:
 
@@ -107,13 +107,13 @@ Se trabaja mediante tres etapas:
 
 ### Reglas de cálculo
 
-La operación `calcular(fechaLimite, fechaDevolucion, esMonitor)` determina el valor de la multa de acuerdo con las siguientes reglas:
+La operación \`calcular(fechaLimite, fechaDevolucion, esMonitor)\` determina el valor de la multa de acuerdo con las siguientes reglas:
 
 | Condición | Resultado |
 |---|---|
-| Devolución en la fecha límite o antes | $0 |
-| Cada día de retraso | $2.000 |
-| Multa máxima | $50.000 |
+| Devolución en la fecha límite o antes | \$0 |
+| Cada día de retraso | \$2.000 |
+| Multa máxima | \$50.000 |
 | Estudiante monitor | Paga la mitad de la multa después de aplicar el tope. |
 
 ### Ciclos de TDD
@@ -133,17 +133,17 @@ Se utilizaron operaciones de fechas de Java para calcular los días de retraso y
 
 ## Parte 3 - Dobles de prueba
 
-Esta parte tiene como objetivo verificar el comportamiento del caso de uso `SolicitarPrestamo` sin depender de una base de datos real ni de servicios externos.
+Esta parte tiene como objetivo verificar el comportamiento del caso de uso \`SolicitarPrestamo\` sin depender de una base de datos real ni de servicios externos.
 
 Para ello, se definieron tres contratos mediante interfaces:
 
 | Contrato | Operación | Responsabilidad |
 |---|---|---|
-| `DisponibilidadEquipos` | `estaDisponible(equipoId)` | Consultar la disponibilidad de un equipo. |
-| `PrestamoRepository` | `siguienteId()` y `guardar(prestamo)` | Obtener identificadores y almacenar préstamos. |
-| `Notificador` | `notificar(estudianteId, mensaje)` | Enviar notificaciones al estudiante. |
+| \`DisponibilidadEquipos\` | \`estaDisponible(equipoId)\` | Consultar la disponibilidad de un equipo. |
+| \`PrestamoRepository\` | \`siguienteId()\` y \`guardar(prestamo)\` | Obtener identificadores y almacenar préstamos. |
+| \`Notificador\` | \`notificar(estudianteId, mensaje)\` | Enviar notificaciones al estudiante. |
 
-También se implementó la excepción `EquipoNoDisponible`.
+También se implementó la excepción \`EquipoNoDisponible\`.
 
 ### Caso de uso SolicitarPrestamo
 
@@ -152,7 +152,7 @@ El caso de uso recibe sus dependencias mediante inyección por constructor.
 Su funcionamiento consiste en:
 
 1. Consultar si el equipo está disponible.
-2. Si no está disponible, lanzar `EquipoNoDisponible`.
+2. Si no está disponible, lanzar \`EquipoNoDisponible\`.
 3. Obtener un identificador mediante el repositorio.
 4. Crear el préstamo.
 5. Guardar el préstamo en el repositorio.
@@ -175,13 +175,13 @@ Esta parte se enfoca en verificar la integración entre el cliente HTTP, la conv
 
 ### Adaptador HTTP
 
-Se implementó la clase `DisponibilidadEquiposHttp`, que implementa el contrato `DisponibilidadEquipos` y permite consultar la disponibilidad de los equipos mediante una API REST.
+Se implementó la clase \`DisponibilidadEquiposHttp\`, que implementa el contrato \`DisponibilidadEquipos\` y permite consultar la disponibilidad de los equipos mediante una API REST.
 
 El adaptador recibe la URL base mediante su constructor, permitiendo utilizar diferentes direcciones para el servicio y el servidor de pruebas.
 
 Se utilizaron las siguientes herramientas:
 
-- `HttpClient`: cliente HTTP incluido en Java 17 para realizar las solicitudes.
+- \`HttpClient\`: cliente HTTP incluido en Java 17 para realizar las solicitudes.
 - Jackson: biblioteca para procesar y deserializar las respuestas JSON.
 - MockWebServer: servidor HTTP local para simular las respuestas del servicio.
 
@@ -189,54 +189,54 @@ Se utilizaron las siguientes herramientas:
 
 El adaptador realiza una solicitud GET con la siguiente estructura:
 
-```http
+\`\`\`http
 GET <urlBase>/api/v1/equipos/<id>
-```
+\`\`\`
 
 Ejemplo de respuesta JSON:
 
-```json
+\`\`\`json
 {
   "id": 12,
   "nombre": "Portatil",
   "estado": "disponible"
 }
-```
+\`\`\`
 
 ### Manejo de respuestas HTTP
 
 | Respuesta | Comportamiento |
 |---|---|
-| HTTP 200 con estado disponible | Retorna `true`. |
-| HTTP 200 con cualquier otro estado | Retorna `false`. |
-| HTTP 404 | Retorna `false`. |
-| Otro código HTTP | Lanza `ServicioNoDisponible` con el código correspondiente. |
-| Error de red | Lanza `ServicioNoDisponible` con el mensaje del error. |
+| HTTP 200 con estado disponible | Retorna \`true\`. |
+| HTTP 200 con cualquier otro estado | Retorna \`false\`. |
+| HTTP 404 | Retorna \`false\`. |
+| Otro código HTTP | Lanza \`ServicioNoDisponible\` con el código correspondiente. |
+| Error de red | Lanza \`ServicioNoDisponible\` con el mensaje del error. |
 
 ### Pruebas de integración HTTP
 
 Se implementaron cuatro escenarios utilizando MockWebServer:
 
-1. **Equipo disponible:** verifica que el adaptador retorne `true`, utilice el método GET y construya correctamente la ruta `/api/v1/equipos/12`.
-2. **Equipo prestado:** verifica que una respuesta HTTP 200 con estado `prestado` retorne `false`.
-3. **Equipo inexistente:** verifica que una respuesta HTTP 404 retorne `false`.
-4. **Error del servidor:** verifica que una respuesta HTTP 500 genere `ServicioNoDisponible` con el mensaje `HTTP 500`.
+1. **Equipo disponible:** verifica que el adaptador retorne \`true\`, utilice el método GET y construya correctamente la ruta \`/api/v1/equipos/12\`.
+2. **Equipo prestado:** verifica que una respuesta HTTP 200 con estado \`prestado\` retorne \`false\`.
+3. **Equipo inexistente:** verifica que una respuesta HTTP 404 retorne \`false\`.
+4. **Error del servidor:** verifica que una respuesta HTTP 500 genere \`ServicioNoDisponible\` con el mensaje \`HTTP 500\`.
 
 ### Integración de extremo a extremo
 
 Se implementó una prueba que integra los siguientes componentes:
 
-- `SolicitarPrestamo`: caso de uso real.
-- `DisponibilidadEquiposHttp`: adaptador HTTP real.
-- `MockWebServer`: servidor HTTP local de pruebas.
-- `PrestamoRepositoryEnMemoria`: implementación fake del repositorio.
-- `Notificador`: mock utilizado para verificar las notificaciones.
+- \`SolicitarPrestamo\`: caso de uso real.
+- \`DisponibilidadEquiposHttp\`: adaptador HTTP real.
+- \`MockWebServer\`: servidor HTTP local de pruebas.
+- \`PrestamoRepositoryEnMemoria\`: implementación fake del repositorio.
+- \`Notificador\`: mock utilizado para verificar las notificaciones.
 
 La prueba verifica que, cuando el servicio HTTP indica que el equipo está disponible, se crea el préstamo y queda almacenado correctamente en el repositorio en memoria.
 
 ### Fake del repositorio
 
-Se implementó `PrestamoRepositoryEnMemoria`, que utiliza una lista para almacenar los préstamos y un contador para generar identificadores consecutivos.
+Se implementó \`PrestamoRepositoryEnMemoria\`, que utiliza una lista para almacenar los préstamos y un contador para generar identificadores consecutivos.
 
 Esto permite comprobar el almacenamiento real de los préstamos durante las pruebas sin utilizar una base de datos.
 
@@ -251,15 +251,15 @@ Se utiliza JaCoCo para generar informes de cobertura de líneas y ramas del proy
 Las actividades contempladas son:
 
 1. Ejecutar todas las pruebas utilizando la herramienta de cobertura.
-2. Revisar los porcentajes de cobertura de los paquetes `domain` y `data`.
+2. Revisar los porcentajes de cobertura de los paquetes \`domain\` y \`data\`.
 3. Identificar las líneas de código que no están siendo ejecutadas.
 4. Agregar pruebas adicionales cuando sea necesario.
 5. Generar el reporte HTML de cobertura.
 
 Las metas establecidas por el laboratorio son:
 
-- Al menos 90 % de cobertura de líneas en `domain`.
-- Al menos 80 % de cobertura de líneas en `data`.
+- Al menos 90 % de cobertura de líneas en \`domain\`.
+- Al menos 80 % de cobertura de líneas en \`data\`.
 
 ### Pruebas de mutación manual
 
@@ -267,13 +267,39 @@ Se deben realizar modificaciones intencionales en el código para comprobar si l
 
 Los mutantes establecidos son:
 
-- Modificar la condición de renovaciones de `renovaciones < 1` a `renovaciones < 2`.
-- Cambiar el límite máximo de la multa de $50.000 a $60.000.
+- Modificar la condición de renovaciones de \`renovaciones < 1\` a \`renovaciones < 2\`.
+- Cambiar el límite máximo de la multa de \$50.000 a \$60.000.
 - Cambiar la condición de respuesta HTTP 404 a HTTP 400.
 
 Después de cada modificación se ejecutan las pruebas y se registra si el mutante fue detectado o sobrevivió. Finalmente, se restaura el código original.
 
-Los resultados definitivos de cobertura y mutación se documentarán después de completar las actividades correspondientes.
+### Resultados de cobertura
+
+Tras ejecutar \`mvn clean verify\`, JaCoCo reportó la siguiente cobertura de líneas:
+
+| Paquete | Cobertura de líneas | Meta | Cumple |
+|---|---|---|---|
+| \`domain\` | 100 % | ≥ 90 % | Sí |
+| \`data\` | 89 % | ≥ 80 % | Sí |
+| Total | 96 % | — | — |
+
+Las 23 pruebas se ejecutan sin fallos ni errores.
+
+Durante la medición se identificó que el constructor \`ServicioNoDisponible(String, Throwable)\`, utilizado cuando falla el procesamiento de la respuesta, no estaba siendo ejercitado. Para cubrir ese camino se agregó la prueba \`DataAdditionalTest\`, que simula una respuesta HTTP 200 con un cuerpo JSON inválido y comprueba que se lance \`ServicioNoDisponible\` conservando la causa original. Con esta prueba la cobertura del paquete \`data\` pasó de 75 % a 89 %, superando el mínimo exigido.
+
+### Resultados de la mutación
+
+Cada mutante se aplicó por separado sobre el código correcto, se ejecutaron todas las pruebas y se restauró el código antes de continuar.
+
+| Mutante | Modificación | Prueba que lo detecta | Resultado |
+|---|---|---|---|
+| M1 | \`renovaciones < 1\` a \`renovaciones < 2\` | \`renovar_porSegundaVez_lanzaError\` | Eliminado |
+| M2 | Tope de multa de \$50.000 a \$60.000 | \`devolucionCuarentaDiasTarde_aplicaTopeCincuentaMil\` | Eliminado |
+| M3 | Respuesta HTTP 404 a HTTP 400 | \`estaDisponible_equipoInexistente_devuelveFalse\` | Eliminado |
+
+Los tres mutantes fueron detectados (eliminados) por las pruebas existentes y el código se restauró a su versión original.
+
+Estos resultados muestran que la cobertura de líneas, por sí sola, no garantiza la calidad de las pruebas: una línea ejecutada solo queda verificada cuando una aserción comprueba su resultado. La prueba de mutación evidencia precisamente la fuerza de esas aserciones, ya que un mutante solo se elimina cuando alguna prueba compara el valor obtenido con el esperado.
 
 ---
 
@@ -281,63 +307,63 @@ Los resultados definitivos de cobertura y mutación se documentarán después de
 
 ### Ejecutar todas las pruebas
 
-```bash
+\`\`\`bash
 mvn clean test
-```
+\`\`\`
 
 ### Parte 1 - Pruebas del préstamo
 
-```bash
+\`\`\`bash
 mvn -Dtest=PrestamoTest test
-```
+\`\`\`
 
 ### Parte 2 - Pruebas de la calculadora de multas
 
-```bash
+\`\`\`bash
 mvn -Dtest=CalculadoraMultaTest test
-```
+\`\`\`
 
 ### Parte 3 - Pruebas del caso de uso
 
-```bash
+\`\`\`bash
 mvn -Dtest=SolicitarPrestamoTest test
-```
+\`\`\`
 
 ### Parte 4 - Pruebas del adaptador HTTP
 
-```bash
+\`\`\`bash
 mvn -Dtest=DisponibilidadEquiposHttpTest test
-```
+\`\`\`
 
 ### Parte 4 - Prueba de extremo a extremo
 
-```bash
+\`\`\`bash
 mvn -Dtest=SolicitarPrestamoIntegrationTest test
-```
+\`\`\`
 
 ### Parte 4 - Todas las pruebas de integración
 
-```bash
+\`\`\`bash
 mvn "-Dtest=DisponibilidadEquiposHttpTest,SolicitarPrestamoIntegrationTest" test
-```
+\`\`\`
 
 ### Generar el reporte de cobertura
 
-```bash
+\`\`\`bash
 mvn clean verify
-```
+\`\`\`
 
 El reporte HTML generado por JaCoCo se encuentra en:
 
-```text
+\`\`\`text
 target/site/jacoco/index.html
-```
+\`\`\`
 
 Los informes de ejecución de JUnit se encuentran en:
 
-```text
+\`\`\`text
 target/surefire-reports/
-```
+\`\`\`
 
 ## Evidencias del laboratorio
 
